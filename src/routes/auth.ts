@@ -1,12 +1,19 @@
 import { Request, Response, Router } from "express";
 import { User } from '../entity/User'
-import { validate } from 'class-validator'
+import { isEmpty, validate } from 'class-validator'
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const register = async (req: Request, res: Response) => {
 
     try {
+
         const { email, username, password } = req.body
-        // TODO: Validate Data
+
+        //Validate Data
         let errors: any = {}
 
         const emailUser = await User.findOne({ email })
@@ -16,7 +23,8 @@ const register = async (req: Request, res: Response) => {
         if (usernameUser) errors.username = 'Username already taken'
 
         if (Object.keys(errors).length > 0) return res.status(400).json({ errors })
-        // TODO: Create the user
+
+        //Create User
         const user = new User({
             email, username, password
         })
@@ -26,8 +34,9 @@ const register = async (req: Request, res: Response) => {
 
         await user.save()
 
-        // TODO: return the user
+        //return User
         return res.json(user)
+
     } catch (err) {
         console.log(err)
         res.status(500).json(err)
@@ -36,7 +45,32 @@ const register = async (req: Request, res: Response) => {
 
 }
 
+const login = async (req: Request, res: Response) => {
+    try {
+        const { username, password } = req.body
+        console.log(username)
+        console.log(isEmpty(username))
+        let errors: any = {}
+        if (isEmpty(username)) errors.username = 'Username must not be empty'
+        if (isEmpty(password)) errors.password = 'Password must not be empty'
+        if (Object.keys(errors).length > 0) return res.status(400).json(errors)
+
+        const user = await User.findOne({ username })
+        if (!user) return res.status(404).json({ error: 'User not found' })
+
+        const passwordMatches = await bcrypt.compare(password, user.password)
+        if (passwordMatches) return res.status(401).json({ password: 'Password is incorrect' })
+
+        const token = jwt.sign({ username }, process.env.JWT_SECRET)
+
+        return res.json({ ...user, token })
+    } catch (error) {
+
+    }
+}
+
 const router = Router()
 router.post('/register', register)
+router.post('/login', login)
 
 export default router
