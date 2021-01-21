@@ -6,7 +6,7 @@
    "password": "1234",
    "database": "biruh",
    "synchronize": true,
-   "logging": true,
+   "logging": false,
    "entities": [
       "src/entity/**/*.ts"
    ],

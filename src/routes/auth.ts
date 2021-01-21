@@ -4,6 +4,7 @@ import { isEmpty, validate } from 'class-validator'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
+import auth from '../middleware/auth'
 
 dotenv.config()
 
@@ -48,8 +49,6 @@ const register = async (req: Request, res: Response) => {
 const login = async (req: Request, res: Response) => {
     try {
         const { username, password } = req.body
-        console.log(username)
-        console.log(isEmpty(username))
         let errors: any = {}
         if (isEmpty(username)) errors.username = 'Username must not be empty'
         if (isEmpty(password)) errors.password = 'Password must not be empty'
@@ -61,6 +60,7 @@ const login = async (req: Request, res: Response) => {
         const passwordMatches = await bcrypt.compare(password, user.password)
         if (passwordMatches) return res.status(401).json({ password: 'Password is incorrect' })
 
+        console.log(user)
         const token = jwt.sign({ username }, process.env.JWT_SECRET)
 
         return res.json({ ...user, token })
@@ -69,8 +69,13 @@ const login = async (req: Request, res: Response) => {
     }
 }
 
+const me = async (req: Request, res: Response) => {
+    res.json(res.locals.user)
+}
+
 const router = Router()
 router.post('/register', register)
 router.post('/login', login)
+router.get('/me', auth, me)
 
 export default router
