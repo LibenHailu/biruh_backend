@@ -1,7 +1,11 @@
-import { IsEmail, Length, Min } from "class-validator";
+import { IsEmail, Length } from "class-validator";
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Index, CreateDateColumn, UpdateDateColumn, BeforeInsert } from "typeorm";
 import { classToPlain, Exclude } from 'class-transformer'
 import bcrypt from 'bcrypt'
+
+export type UserRoleType = "admin" | "editor" | "ghost"
+export type UserInterests = "Swimming" | "Cooking" | "Workout"
+export type MaritalStatus = "Single" | "Married" | "Widowed" | "Divorced"
 
 @Entity("users")
 export class User extends BaseEntity {
@@ -12,22 +16,61 @@ export class User extends BaseEntity {
 
     @Exclude()
     @PrimaryGeneratedColumn()
-    id: number;
+    id: number
 
     @Index()
     @IsEmail()
     @Column({ unique: true })
-    email: string;
+    email: string
 
     @Exclude()
     @Index()
     @Length(3, 255)
     @Column({ unique: true })
-    username: string;
+    username: string
 
     @Column()
     @Length(6, 255)
-    password: string;
+    password: string
+
+    @Column({
+        type: "enum",
+        enum: ["admin", "user"],
+        default: "user"
+    })
+    role: UserRoleType
+
+    @Column("text", { array: true, default: "{}" })
+    profession: string[]
+
+    @Column({
+        type: "enum",
+        enum: ["Swimming", "Cooking", "Workout"],
+        array: true,
+        default: []
+    })
+    interests: UserInterests[]
+
+    @Column()
+    firstname: string
+
+    @Column()
+    lastname: string
+
+    @Column({
+        type: "enum",
+        enum: ["Single", "Married", "Widowed", "Divorced"],
+        default: "Single"
+    })
+    marital_status: MaritalStatus
+
+    @Column()
+    city: string
+
+    @Column({
+        nullable: true
+    })
+    bio: string
 
     @CreateDateColumn()
     createdAt: Date

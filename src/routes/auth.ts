@@ -9,10 +9,8 @@ import auth from '../middleware/auth'
 dotenv.config()
 
 const register = async (req: Request, res: Response) => {
-
     try {
-
-        const { email, username, password } = req.body
+        const { email, username, password, role, profession, interests, firstname, lastname, marital_status, city, bio } = req.body
 
         //Validate Data
         let errors: any = {}
@@ -27,7 +25,7 @@ const register = async (req: Request, res: Response) => {
 
         //Create User
         const user = new User({
-            email, username, password
+            email, username, password, role, profession, interests, firstname, lastname, marital_status, city, bio
         })
 
         errors = await validate(user)
@@ -41,7 +39,6 @@ const register = async (req: Request, res: Response) => {
     } catch (err) {
         console.log(err)
         res.status(500).json(err)
-
     }
 
 }
