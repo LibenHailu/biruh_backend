@@ -6,6 +6,7 @@ import bcrypt from 'bcrypt'
 export type UserRoleType = "admin" | "editor" | "ghost"
 export type UserInterests = "Swimming" | "Cooking" | "Workout"
 export type MaritalStatus = "Single" | "Married" | "Widowed" | "Divorced"
+export type UserSex = "male" | "female"
 
 @Entity("users")
 export class User extends BaseEntity {
@@ -68,9 +69,20 @@ export class User extends BaseEntity {
     city: string
 
     @Column({
+        type: "enum",
+        enum: ["male", "female"],
+        default: ""
+    })
+    sex: UserSex
+
+
+    @Column({
         nullable: true
     })
     bio: string
+
+    @Column()
+    age: number
 
     @CreateDateColumn()
     createdAt: Date
