@@ -1,12 +1,12 @@
 import { IsEmail, Length } from "class-validator";
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Index, CreateDateColumn, UpdateDateColumn, BeforeInsert } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Index, CreateDateColumn, UpdateDateColumn, BeforeInsert, In, DeleteDateColumn } from "typeorm";
 import { classToPlain, Exclude } from 'class-transformer'
 import bcrypt from 'bcrypt'
 
 export type UserRoleType = "admin" | "editor" | "ghost"
 export type UserInterests = "Swimming" | "Cooking" | "Workout"
 export type MaritalStatus = "Single" | "Married" | "Widowed" | "Divorced"
-export type UserSex = "male" | "female"
+
 
 @Entity("users")
 export class User extends BaseEntity {
@@ -15,24 +15,18 @@ export class User extends BaseEntity {
         Object.assign(this, user)
     }
 
-    @Exclude()
-    @PrimaryGeneratedColumn()
-    id: number
+    @Index()
+    @PrimaryGeneratedColumn("uuid")
+    id: string
 
     @Index()
     @IsEmail()
-    @Column({ unique: true })
+    @Column({ unique: true, nullable: true })
     email: string
 
-    @Exclude()
     @Index()
-    @Length(3, 255)
     @Column({ unique: true })
-    username: string
-
-    @Column()
-    @Length(6, 255)
-    password: string
+    phone: number
 
     @Column({
         type: "enum",
@@ -41,6 +35,7 @@ export class User extends BaseEntity {
     })
     role: UserRoleType
 
+    @Index()
     @Column("text", { array: true, default: "{}" })
     profession: string[]
 
@@ -68,12 +63,8 @@ export class User extends BaseEntity {
     @Column()
     city: string
 
-    @Column({
-        type: "enum",
-        enum: ["male", "female"],
-        default: ""
-    })
-    sex: UserSex
+    @Column()
+    sex: string
 
 
     @Column({
@@ -89,11 +80,9 @@ export class User extends BaseEntity {
 
     @UpdateDateColumn()
     updatedAt: Date
-
-    @BeforeInsert()
-    async hashPassword() {
-        this.password = await bcrypt.hash(this.password, 10)
-    }
+    
+    @DeleteDateColumn()
+    deletedAt: Date
 
     toJSON() {
         return classToPlain(this)

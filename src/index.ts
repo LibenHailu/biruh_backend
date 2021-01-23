@@ -3,7 +3,7 @@ import { createConnection } from "typeorm"
 import express from "express"
 import morgan from 'morgan'
 
-import authRoutes from './routes/auth'
+import authRoutes from './routes/user'
 
 import trim from './middleware/trim'
 // import {User} from "./entity/User";
@@ -15,7 +15,7 @@ app.use(morgan('dev'))
 app.use(trim)
 
 app.get('/', (_, res) => res.send('hello world'))
-app.use('/api/auth', authRoutes)
+app.use('/api/user', authRoutes)
 
 app.listen(5000, async () => {
     console.log('Server running on at http://localhost:5000')
