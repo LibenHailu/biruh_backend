@@ -5,9 +5,9 @@ import morgan from 'morgan'
 
 import userRoutes from './routes/user'
 import messageRoutes from './routes/message'
+import notificationRoutes from './routes/notification'
 
 import trim from './middleware/trim'
-// import {User} from "./entity/User";
 
 const app = express()
 
@@ -15,9 +15,9 @@ app.use(express.json())
 app.use(morgan('dev'))
 app.use(trim)
 
-app.get('/', (_, res) => res.send('hello world'))
 app.use('/api/user', userRoutes)
 app.use('/api/message', messageRoutes)
+app.use('/api/notification', notificationRoutes)
 
 app.listen(5000, async () => {
     console.log('Server running on at http://localhost:5000')

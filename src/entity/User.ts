@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Index, CreateDateCo
 import { classToPlain, Exclude } from 'class-transformer'
 import bcrypt from 'bcrypt'
 import { Message } from "./Message";
+import { Notification } from "./Notification";
 
 export type UserRoleType = "admin" | "editor" | "ghost"
 export type UserInterests = "Swimming" | "Cooking" | "Workout"
@@ -81,6 +82,9 @@ export class User extends BaseEntity {
 
     @OneToMany(() => Message, message => message.receiver)
     received: Message[];
+
+    @OneToMany(() => Notification, notification => notification.user)
+    notification: Notification[];
 
     @CreateDateColumn()
     createdAt: Date
