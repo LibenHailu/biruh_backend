@@ -1,17 +1,15 @@
 import { Request, Response, Router } from "express";
 import { User } from '../entity/User'
 import { isEmpty, validate } from 'class-validator'
-// import bcrypt from 'bcrypt'
-// import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
-
-
 dotenv.config()
+
+
+
 
 const registerUser = async (req: Request, res: Response) => {
     try {
         const { email, phone, role, profession, interests, firstname, lastname, marital_status, city, bio, sex, age } = req.body
-
         //Validate Data
         let errors: any = {}
 
@@ -22,7 +20,6 @@ const registerUser = async (req: Request, res: Response) => {
         if (phoneUser) errors.phone = 'Phone already taken'
 
         if (Object.keys(errors).length > 0) return res.status(400).json({ errors })
-
         //Create User
         const user = new User({
             phone, email, role, profession, interests, firstname, lastname, marital_status, city, bio, sex, age
@@ -32,7 +29,6 @@ const registerUser = async (req: Request, res: Response) => {
         if (errors.length > 0) return res.status(400).json({ errors })
 
         await user.save()
-
         //return User
         return res.json(user)
 
@@ -40,8 +36,10 @@ const registerUser = async (req: Request, res: Response) => {
         console.log(err)
         res.status(500).json(err)
     }
-
 }
+
+
+
 
 const getUsersPage = async (req: Request, res: Response) => {
     try {
@@ -71,6 +69,8 @@ const getUsersPage = async (req: Request, res: Response) => {
     }
 }
 
+
+
 const updateUser = async (req: Request, res: Response) => {
     try {
         const { id } = req.params
@@ -99,6 +99,8 @@ const updateUser = async (req: Request, res: Response) => {
     }
 }
 
+
+
 const deleteUser = async (req: Request, res: Response) => {
 
     try {
@@ -114,6 +116,8 @@ const deleteUser = async (req: Request, res: Response) => {
         res.status(401).json({ error: "invalid request" })
     }
 }
+
+
 
 const getUser = async (req: Request, res: Response) => {
     try {

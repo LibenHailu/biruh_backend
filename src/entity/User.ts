@@ -1,7 +1,8 @@
 import { IsEmail, Length } from "class-validator";
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Index, CreateDateColumn, UpdateDateColumn, BeforeInsert, In, DeleteDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Index, CreateDateColumn, UpdateDateColumn, BeforeInsert, In, DeleteDateColumn, OneToMany } from "typeorm";
 import { classToPlain, Exclude } from 'class-transformer'
 import bcrypt from 'bcrypt'
+import { Message } from "./Message";
 
 export type UserRoleType = "admin" | "editor" | "ghost"
 export type UserInterests = "Swimming" | "Cooking" | "Workout"
@@ -75,12 +76,18 @@ export class User extends BaseEntity {
     @Column()
     age: number
 
+    @OneToMany(() => Message, message => message.sender)
+    sent: Message[];
+
+    @OneToMany(() => Message, message => message.receiver)
+    received: Message[];
+
     @CreateDateColumn()
     createdAt: Date
 
     @UpdateDateColumn()
     updatedAt: Date
-    
+
     @DeleteDateColumn()
     deletedAt: Date
 
