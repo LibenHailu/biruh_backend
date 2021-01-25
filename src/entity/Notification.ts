@@ -17,7 +17,7 @@ export class Notification extends BaseEntity {
     @Column()
     description: string;
 
-    @ManyToOne(() => User, user => user.notification)
+    @ManyToOne(() => User, user => user.notifications)
     user: User;
 
     @CreateDateColumn()

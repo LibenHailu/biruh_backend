@@ -4,6 +4,7 @@ import { classToPlain, Exclude } from 'class-transformer'
 import bcrypt from 'bcrypt'
 import { Message } from "./Message";
 import { Notification } from "./Notification";
+import { UserFilter } from "./UserFilter";
 
 export type UserRoleType = "admin" | "editor" | "ghost"
 export type UserInterests = "Swimming" | "Cooking" | "Workout"
@@ -28,7 +29,7 @@ export class User extends BaseEntity {
 
     @Index()
     @Column({ unique: true })
-    phone: number
+    phone: string
 
     @Column({
         type: "enum",
@@ -84,7 +85,10 @@ export class User extends BaseEntity {
     received: Message[];
 
     @OneToMany(() => Notification, notification => notification.user)
-    notification: Notification[];
+    notifications: Notification[];
+
+    @OneToMany(() => UserFilter, userFilter => userFilter.user)
+    user_filters: UserFilter[];
 
     @CreateDateColumn()
     createdAt: Date
